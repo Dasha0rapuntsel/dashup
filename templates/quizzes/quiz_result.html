@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Результат теста{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>Результат: {{ attempt.quiz.title }}</h1>
+    <p>
+      {% if attempt.student.first_name %}
+        {{ attempt.student.first_name }} {{ attempt.student.last_name }}
+      {% else %}
+        {{ attempt.student.username }}
+      {% endif %}
+      — {{ attempt.score }} / {{ attempt.max_score }} баллов
+    </p>
+  </div>
+
+  <div class="card">
+    <div class="actions">
+      {% if request.user.role == "teacher" %}
+        <a class="btn" href="{% url 'quiz_detail' attempt.quiz.id %}">← К тесту</a>
+      {% else %}
+        <a class="btn" href="{% url 'quiz_list' %}">← К тестам</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Ответы</h2>
+    {% for a in answers %}
+      <div style="padding: 16px 0; {% if not forloop.last %}border-bottom: 1px solid #f0e6ec;{% endif %}">
+        <p>
+          <b>{{ a.question.order }}.</b> {{ a.question.text }}
+          {% if a.is_correct %}
+            <span class="badge" style="background:#e6f4ea; color:#2d7a3a; border-color:#c3e6cb;">✓ правильно — {{ a.points_earned }} б.</span>
+          {% else %}
+            <span class="badge" style="background:#fdecea; color:#a94442; border-color:#f5c6cb;">✗ неправильно</span>
+          {% endif %}
+        </p>
+
+        {% if a.question.question_type == "text" %}
+          <p class="muted">Ответ: {{ a.text_answer|default:"(не указан)" }}</p>
+        {% else %}
+          {% for c in a.question.choices.all %}
+            <div style="margin: 4px 0; padding: 6px 10px; border-radius: 10px;
+              {% if c.is_correct %}background: #f0faf2;{% endif %}
+              {% if c in a.selected_choices.all and not c.is_correct %}background: #fef2f1;{% endif %}
+            ">
+              {% if c in a.selected_choices.all %}☑{% else %}☐{% endif %}
+              {{ c.text }}
+              {% if c.is_correct %}<span class="muted">(правильный)</span>{% endif %}
+            </div>
+          {% endfor %}
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Оценки — DashUp{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>Журнал оценок</h1>
+    <p>Выставляйте оценки ученикам за занятия и работу на уроке.</p>
+  </div>
+
+  <div style="margin-bottom:20px;">
+    <a class="btn btn-primary" href="{% url 'create_grade' %}">Выставить оценку</a>
+  </div>
+
+  {% if students_data %}
+    {% for course_title, students in students_data.items %}
+      <div class="card">
+        <h2>{{ course_title }}</h2>
+        <div style="overflow-x:auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Ученик</th>
+                <th>Средний балл</th>
+                <th>Кол-во оценок</th>
+                <th>Последняя оценка</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for s in students %}
+                <tr>
+                  <td>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                      <div style="width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#e8d0df,#e5dcf0);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:#fff;flex-shrink:0;">
+                        {{ s.initial }}
+                      </div>
+                      <div>
+                        <div style="font-weight:700;">{{ s.name }}</div>
+                        <div class="muted">{{ s.username }}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    {% if s.avg_score %}
+                      <span style="font-weight:800; font-size:18px;">{{ s.avg_score }}</span>
+                      <span class="muted">/ {{ s.avg_max }}</span>
+                    {% else %}
+                      <span class="muted">—</span>
+                    {% endif %}
+                  </td>
+                  <td>{{ s.grade_count }}</td>
+                  <td>
+                    {% if s.last_grade %}
+                      {{ s.last_grade.score }}/{{ s.last_grade.max_score }}
+                      <span class="muted">{{ s.last_grade.created_at|date:"d.m" }}</span>
+                    {% else %}
+                      <span class="muted">—</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    <a class="btn" href="{% url 'create_grade' %}?student={{ s.id }}&course={{ s.course_id }}" style="font-size:12px; padding:6px 14px;">+ Оценка</a>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="card">
+      <div class="empty-state">
+        <div class="empty-icon" style="color:var(--text-muted);"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        <p>Оценок пока нет. Выставите первую оценку — и здесь появится журнал.</p>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Календарь — DashUp{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>Календарь занятий</h1>
+    <p>Нажмите на день, чтобы увидеть занятия.</p>
+  </div>
+
+  <div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+      <a class="btn" href="{% url 'lesson_schedule_month' prev_year prev_month %}">← Назад</a>
+      <h2 style="margin:0;">{{ month_name }} {{ year }}</h2>
+      <a class="btn" href="{% url 'lesson_schedule_month' next_year next_month %}">Вперёд →</a>
+    </div>
+  </div>
+
+  <div class="card" style="padding:16px;">
+    <div style="display:grid; grid-template-columns:repeat(7,1fr); gap:8px; margin-bottom:10px;">
+      {% for day_name in "Пн,Вт,Ср,Чт,Пт,Сб,Вс"|make_list %}
+      {% endfor %}
+      <div style="text-align:center; font-weight:700; color:var(--text-muted); font-size:13px;">Пн</div>
+      <div style="text-align:center; font-weight:700; color:var(--text-muted); font-size:13px;">Вт</div>
+      <div style="text-align:center; font-weight:700; color:var(--text-muted); font-size:13px;">Ср</div>
+      <div style="text-align:center; font-weight:700; color:var(--text-muted); font-size:13px;">Чт</div>
+      <div style="text-align:center; font-weight:700; color:var(--text-muted); font-size:13px;">Пт</div>
+      <div style="text-align:center; font-weight:700; color:var(--text-muted); font-size:13px;">Сб</div>
+      <div style="text-align:center; font-weight:700; color:var(--text-muted); font-size:13px;">Вс</div>
+    </div>
+
+    {% for week in calendar_data %}
+      <div style="display:grid; grid-template-columns:repeat(7,1fr); gap:8px; margin-bottom:8px;">
+        {% for item in week %}
+          {% if item %}
+            <a href="{% url 'lesson_schedule_day' year month item.day %}"
+               style="
+                 min-height:120px;
+                 border:1px solid var(--border);
+                 border-radius:var(--radius-sm);
+                 padding:10px;
+                 background:var(--card);
+                 text-decoration:none;
+                 color:inherit;
+                 display:block;
+                 transition:all var(--transition);
+               "
+               onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='var(--shadow-hover)';"
+               onmouseout="this.style.transform=''; this.style.boxShadow='';"
+            >
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <div style="font-size:16px; font-weight:800; color:var(--accent);">{{ item.day }}</div>
+                {% if item.lessons %}
+                  <span class="badge" style="font-size:10px; padding:3px 8px;">{{ item.lessons|length }}</span>
+                {% endif %}
+              </div>
+
+              {% if item.lessons %}
+                {% for lesson in item.lessons|slice:":2" %}
+                  <div style="font-size:12px; color:var(--text-light); padding:6px 8px; border-radius:var(--radius-xs); background:rgba(155,126,168,0.06); border:1px solid var(--border-light); margin-bottom:4px;">
+                    <b>{{ lesson.time_range }}</b><br>{{ lesson.course.title|truncatechars:20 }}
+                  </div>
+                {% endfor %}
+                {% if item.lessons|length > 2 %}
+                  <div class="muted" style="font-size:11px; margin-top:2px;">ещё...</div>
+                {% endif %}
+              {% endif %}
+            </a>
+          {% else %}
+            <div style="min-height:120px; border-radius:var(--radius-sm); background:rgba(255,255,255,0.3); border:1px dashed var(--border-light);"></div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}

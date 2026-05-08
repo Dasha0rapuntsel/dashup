@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block title %}DashUp — Учебная платформа{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>Добро пожаловать в DashUp</h1>
+    <p>Единое пространство для организации учебного процесса — расписание, задания, оценки, тесты и оплаты.</p>
+  </div>
+
+  {% if request.user.is_authenticated %}
+    <div class="stats-grid">
+      {% if request.user.role == "teacher" %}
+        <a href="{% url 'teacher_dashboard' %}" class="stat-card" style="text-decoration:none; color:inherit;">
+          <div class="stat-icon rose">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9b7ea8" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <div style="font-size:15px; font-weight:700; margin-top:8px;">
+            {% if request.user.first_name %}{{ request.user.first_name }} {{ request.user.last_name }}{% else %}{{ request.user.username }}{% endif %}
+          </div>
+          <div class="stat-label">Преподаватель</div>
+        </a>
+
+        <a href="{% url 'lesson_schedule' %}" class="stat-card" style="text-decoration:none; color:inherit;">
+          <div class="stat-icon blue">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7a9bb5" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <div style="font-size:14px; font-weight:600; margin-top:8px;">Управляйте расписанием и следите за прогрессом учеников</div>
+        </a>
+
+        <a href="{% url 'teacher_dashboard' %}" class="stat-card" style="text-decoration:none; color:inherit;">
+          <div class="stat-icon lilac">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8a7a9e" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          </div>
+          <div style="font-size:14px; font-weight:700; margin-top:8px;">Перейти в кабинет</div>
+          <div class="stat-label">Все разделы в одном месте</div>
+        </a>
+      {% else %}
+        <a href="{% url 'student_dashboard' %}" class="stat-card" style="text-decoration:none; color:inherit;">
+          <div class="stat-icon rose">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9b7ea8" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <div style="font-size:15px; font-weight:700; margin-top:8px;">
+            {% if request.user.first_name %}{{ request.user.first_name }} {{ request.user.last_name }}{% else %}{{ request.user.username }}{% endif %}
+          </div>
+          <div class="stat-label">Ученик</div>
+        </a>
+
+        <a href="{% url 'homework_list' %}" class="stat-card" style="text-decoration:none; color:inherit;">
+          <div class="stat-icon blue">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7a9bb5" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          </div>
+          <div style="font-size:14px; font-weight:600; margin-top:8px;">Проверяйте задания и следите за оценками</div>
+        </a>
+
+        <a href="{% url 'student_dashboard' %}" class="stat-card" style="text-decoration:none; color:inherit;">
+          <div class="stat-icon lilac">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8a7a9e" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          </div>
+          <div style="font-size:14px; font-weight:700; margin-top:8px;">Перейти в кабинет</div>
+          <div class="stat-label">Расписание, ДЗ, тесты</div>
+        </a>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  <div class="grid">
+    <a href="{% if request.user.is_authenticated %}{% url 'lesson_schedule' %}{% else %}{% url 'login' %}{% endif %}" class="card" style="text-decoration:none; color:inherit; cursor:pointer;">
+      <h2>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" style="vertical-align:-3px; margin-right:6px;"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Расписание
+      </h2>
+      <p style="color:var(--text-light); line-height:1.6;">Удобный календарь занятий с возможностью просмотра по дням и месяцам. Преподаватель создаёт разовые и постоянные занятия, переносит и отменяет.</p>
+    </a>
+    <a href="{% if request.user.is_authenticated %}{% url 'homework_list' %}{% else %}{% url 'login' %}{% endif %}" class="card" style="text-decoration:none; color:inherit; cursor:pointer;">
+      <h2>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" style="vertical-align:-3px; margin-right:6px;"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Домашние задания
+      </h2>
+      <p style="color:var(--text-light); line-height:1.6;">Преподаватель назначает ДЗ с файлами и дедлайнами. Ученики сдают работы онлайн, а преподаватель проверяет и ставит баллы.</p>
+    </a>
+    <a href="{% if request.user.is_authenticated %}{% url 'grade_list' %}{% else %}{% url 'login' %}{% endif %}" class="card" style="text-decoration:none; color:inherit; cursor:pointer;">
+      <h2>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" style="vertical-align:-3px; margin-right:6px;"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Оценки и тесты
+      </h2>
+      <p style="color:var(--text-light); line-height:1.6;">Электронный журнал оценок за занятия. Тесты с автоматической проверкой — загрузка из JSON или создание вручную.</p>
+    </a>
+    <a href="{% if request.user.is_authenticated %}{% url 'payment_list' %}{% else %}{% url 'login' %}{% endif %}" class="card" style="text-decoration:none; color:inherit; cursor:pointer;">
+      <h2>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" style="vertical-align:-3px; margin-right:6px;"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        Учёт оплат
+      </h2>
+      <p style="color:var(--text-light); line-height:1.6;">Преподаватель выставляет оплаты, отмечает поступления. Ученик видит историю и текущий статус оплат.</p>
+    </a>
+    <a href="{% if request.user.is_authenticated %}{% url 'telegram_link' %}{% else %}{% url 'login' %}{% endif %}" class="card" style="text-decoration:none; color:inherit; cursor:pointer;">
+      <h2>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" style="vertical-align:-3px; margin-right:6px;"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        Telegram-бот
+      </h2>
+      <p style="color:var(--text-light); line-height:1.6;">Привяжите Telegram и получайте уведомления о занятиях, дедлайнах ДЗ и новых тестах прямо в мессенджер.</p>
+    </a>
+    <div class="card">
+      <h2>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" style="vertical-align:-3px; margin-right:6px;"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        Безопасность
+      </h2>
+      <p style="color:var(--text-light); line-height:1.6;">Каждый пользователь видит только свои данные. Разделение ролей преподаватель/ученик с полным контролем доступа.</p>
+    </div>
+  </div>
+
+  {% if not request.user.is_authenticated %}
+    <div class="card" style="text-align:center; padding:40px;">
+      <p style="font-size:16px; margin-bottom:16px;">Войдите или зарегистрируйтесь, чтобы начать</p>
+      <div style="display:flex; gap:12px; justify-content:center;">
+        <a class="btn btn-primary" href="{% url 'login' %}">Войти</a>
+        <a class="btn" href="{% url 'register' %}">Зарегистрироваться</a>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}

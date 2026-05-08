@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}{{ homework.title }}{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>{{ homework.title }}</h1>
+    <p>{{ homework.course.title }}</p>
+  </div>
+
+  <div class="card">
+    <div class="actions">
+      <a class="btn" href="{% url 'homework_list' %}">← К домашним заданиям</a>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Задание</h2>
+      <p>{{ homework.description }}</p>
+      {% if homework.due_date %}
+        <p class="muted">Сдать до: {{ homework.due_date|date:"d.m.Y" }}</p>
+      {% endif %}
+
+      {% if homework.attachments.all %}
+        <h3>Файлы от преподавателя</h3>
+        <ul class="clean-list">
+          {% for att in homework.attachments.all %}
+            <li>
+              <a class="link" href="{{ att.file.url }}" target="_blank">
+                {{ att.title|default:att.file.name }}
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+
+      <p><b>Статус:</b> <span class="badge">{{ status_obj.get_status_display }}</span></p>
+      {% if status_obj.score %}
+        <p><b>Балл:</b> {{ status_obj.score }} / {{ homework.max_score }}</p>
+      {% endif %}
+      {% if status_obj.teacher_comment %}
+        <p><b>Комментарий преподавателя:</b> {{ status_obj.teacher_comment }}</p>
+      {% endif %}
+    </div>
+
+    <div class="card">
+      <h2>Ваш ответ</h2>
+      <form method="post" action="{% url 'submit_homework' homework.id %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Отправить ответ</button>
+      </form>
+
+      {% if status_obj.submission_attachments.all %}
+        <h3 style="margin-top:20px;">Ваши файлы</h3>
+        <ul class="clean-list">
+          {% for att in status_obj.submission_attachments.all %}
+            <li>
+              <a class="link" href="{{ att.file.url }}" target="_blank">
+                {{ att.title|default:att.file.name }}
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

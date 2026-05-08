@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Оплата{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>Оплата</h1>
+    <p>{{ payment.course.title }}</p>
+  </div>
+
+  <div class="card">
+    <p><b>Сумма:</b> {{ payment.amount }}</p>
+    <p><b>Срок:</b> {{ payment.due_date }}</p>
+    <p><b>Статус:</b> {{ payment.get_status_display }}</p>
+
+    {% if payment.period_label %}
+      <p><b>За что:</b> {{ payment.period_label }}</p>
+    {% endif %}
+
+    {% if payment.method %}
+      <p><b>Способ оплаты:</b> {{ payment.get_method_display }}</p>
+    {% endif %}
+
+    {% if payment.paid_at %}
+      <p><b>Дата оплаты:</b> {{ payment.paid_at }}</p>
+    {% endif %}
+
+    {% if payment.note %}
+      <p><b>Комментарий:</b> {{ payment.note }}</p>
+    {% endif %}
+  </div>
+{% endblock %}

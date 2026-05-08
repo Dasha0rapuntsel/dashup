@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Создать тест{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>Создать тест</h1>
+    <p>Укажите направление, название и описание теста. После создания добавьте вопросы.</p>
+  </div>
+
+  <div class="card">
+    <div class="actions">
+      <a class="btn" href="{% url 'quiz_list' %}">← К тестам</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Создать и перейти к вопросам</button>
+    </form>
+  </div>
+{% endblock %}

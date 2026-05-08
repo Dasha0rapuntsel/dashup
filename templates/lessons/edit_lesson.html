@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Редактировать занятие{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>Редактировать занятие</h1>
+    <p><b>{{ lesson.course.title }}</b> — {{ lesson.lesson_date }} — {{ lesson.time_range }}</p>
+  </div>
+
+  <div class="card">
+    <div class="actions">
+      <a class="btn" href="{% url 'lesson_schedule_day' lesson.lesson_date.year lesson.lesson_date.month lesson.lesson_date.day %}">
+        ← Вернуться к дню
+      </a>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Изменить занятие</h2>
+
+      <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" name="action" value="save">Сохранить изменения</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>Действия</h2>
+
+      {% if lesson.status != "cancelled" %}
+        <form method="post" style="margin-bottom: 12px;">
+          {% csrf_token %}
+          <button type="submit" name="action" value="cancel">Отменить занятие</button>
+        </form>
+      {% else %}
+        <form method="post">
+          {% csrf_token %}
+          <button type="submit" name="action" value="restore">Вернуть в расписание</button>
+        </form>
+      {% endif %}
+
+      <p class="muted" style="margin-top: 16px;">
+        Если изменить дату или время, занятие будет считаться перенесённым.
+      </p>
+    </div>
+  </div>
+{% endblock %}

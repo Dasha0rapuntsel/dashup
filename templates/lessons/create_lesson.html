@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}Добавить занятие{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>Добавить занятие</h1>
+    <p>Дата: <b>{{ selected_date }}</b></p>
+  </div>
+
+  <div class="card">
+    <div class="actions">
+      <a class="btn" href="{% url 'lesson_schedule_day' selected_date.year selected_date.month selected_date.day %}">
+        ← Вернуться к дню
+      </a>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Форма занятия</h2>
+
+      <form method="post">
+        {% csrf_token %}
+
+        <p>{{ form.course.label_tag }} {{ form.course }}</p>
+        <p>{{ form.title.label_tag }} {{ form.title }}</p>
+        <p>{{ form.lesson_date.label_tag }} {{ form.lesson_date }}</p>
+        <p>{{ form.start_time.label_tag }} {{ form.start_time }}</p>
+        <p>{{ form.duration_minutes.label_tag }} {{ form.duration_minutes }}</p>
+        <p>{{ form.status.label_tag }} {{ form.status }}</p>
+        <p>{{ form.create_mode.label_tag }} {{ form.create_mode }}</p>
+
+        <div id="recurring-fields" style="display: none;">
+          <p>{{ form.repeat_every_weeks.label_tag }} {{ form.repeat_every_weeks }}</p>
+          <p>{{ form.repeat_until.label_tag }} {{ form.repeat_until }}</p>
+        </div>
+
+        <p>{{ form.notes.label_tag }} {{ form.notes }}</p>
+
+        {% if form.non_field_errors %}
+          <div class="card" style="background: #fff8fb; border: 1px solid #ead4df;">
+            {{ form.non_field_errors }}
+          </div>
+        {% endif %}
+
+        <button type="submit">Сохранить занятие</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>Для кого занятие</h2>
+      <div id="course-info-box">
+        <p class="muted">Сначала выберите курс.</p>
+      </div>
+    </div>
+  </div>
+  <script id="course-data" type="application/json">
+  {{ course_participants_json|safe }}
+</script>
+  <script>
+   
+    const courseSelect = document.getElementById("id_course");
+    const infoBox = document.getElementById("course-info-box");
+
+    const createModeSelect = document.getElementById("id_create_mode");
+    const recurringFields = document.getElementById("recurring-fields");
+
+    function renderCourseInfo() {
+      const selectedCourseId = courseSelect.value;
+
+      if (!selectedCourseId || !courseData[selectedCourseId]) {
+        infoBox.innerHTML = '<p class="muted">Сначала выберите курс.</p>';
+        return;
+      }
+
+      const data = courseData[selectedCourseId];
+
+      let formatText = "Не указан";
+      if (data.format === "group") {
+        formatText = "Групповой";
+      } else if (data.format === "individual") {
+        formatText = "Индивидуальный";
+      }
+
+      let studentsHtml = "";
+      if (data.students.length > 0) {
+        studentsHtml = "<ul class='clean-list'>" +
+          data.students.map(student => `<li>${student}</li>`).join("") +
+          "</ul>";
+      } else {
+        studentsHtml = "<p class='muted'>Пока нет записанных учеников.</p>";
+      }
+
+      infoBox.innerHTML = `
+        <p><b>Курс:</b> ${data.title}</p>
+        <p><b>Формат:</b> ${formatText}</p>
+        ${data.group_name ? `<p><b>Группа / метка:</b> ${data.group_name}</p>` : ""}
+        <p><b>Ученики:</b></p>
+        ${studentsHtml}
+      `;
+    }
+
+    function toggleRecurringFields() {
+      if (createModeSelect.value === "recurring") {
+        recurringFields.style.display = "block";
+      } else {
+        recurringFields.style.display = "none";
+      }
+    }
+
+    courseSelect.addEventListener("change", renderCourseInfo);
+    createModeSelect.addEventListener("change", toggleRecurringFields);
+
+    renderCourseInfo();
+    toggleRecurringFields();
+  </script>
+{% endblock %}

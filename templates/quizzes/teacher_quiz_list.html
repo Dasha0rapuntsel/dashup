@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Тесты — DashUp{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>Управление тестами</h1>
+    <p>Создавайте тесты вручную или импортируйте из JSON. Результаты проверяются автоматически.</p>
+  </div>
+
+  <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px;">
+    <a class="btn btn-primary" href="{% url 'create_quiz' %}">Создать тест вручную</a>
+    <a class="btn" href="{% url 'import_quiz_json' %}">📄 Импортировать из JSON</a>
+  </div>
+
+  {% if quizzes %}
+    <div class="card">
+      <div style="overflow-x:auto;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Название</th>
+              <th>Направление</th>
+              <th>Вопросов</th>
+              <th>Макс. балл</th>
+              <th>Статус</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for q in quizzes %}
+              <tr>
+                <td><a class="link" href="{% url 'quiz_detail' q.id %}">{{ q.title }}</a></td>
+                <td class="muted">{{ q.course.title }}</td>
+                <td>{{ q.question_count }}</td>
+                <td>{{ q.max_score }}</td>
+                <td>
+                  {% if q.is_active %}
+                    <span class="badge badge-success">активен</span>
+                  {% else %}
+                    <span class="badge">неактивен</span>
+                  {% endif %}
+                </td>
+                <td>
+                  <a class="btn" href="{% url 'add_question' q.id %}" style="font-size:12px; padding:6px 14px;">+ Вопросы</a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  {% else %}
+    <div class="card">
+      <div class="empty-state">
+        <div class="empty-icon" style="color:var(--text-muted);"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+        <p>Тестов пока нет. Создайте первый тест вручную или импортируйте из JSON-файла.</p>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}

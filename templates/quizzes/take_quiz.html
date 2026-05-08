@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Прохождение теста{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>{{ quiz.title }}</h1>
+    <p>{{ quiz.course.title }} — {{ questions|length }} вопросов</p>
+  </div>
+
+  <div class="card">
+    <form method="post">
+      {% csrf_token %}
+
+      {% for q in questions %}
+        <div style="padding: 20px 0; {% if not forloop.last %}border-bottom: 1px solid #f0e6ec;{% endif %}">
+          <p><b>{{ q.order }}.</b> {{ q.text }}</p>
+          <span class="badge">{{ q.points }} б.</span>
+
+          {% if q.question_type == "single" %}
+            {% for c in q.choices.all %}
+              <div style="margin: 8px 0;">
+                <label style="cursor:pointer;">
+                  <input type="radio" name="question_{{ q.id }}" value="{{ c.id }}">
+                  {{ c.text }}
+                </label>
+              </div>
+            {% endfor %}
+          {% elif q.question_type == "multiple" %}
+            {% for c in q.choices.all %}
+              <div style="margin: 8px 0;">
+                <label style="cursor:pointer;">
+                  <input type="checkbox" name="question_{{ q.id }}" value="{{ c.id }}">
+                  {{ c.text }}
+                </label>
+              </div>
+            {% endfor %}
+          {% elif q.question_type == "text" %}
+            <div style="margin-top: 10px;">
+              <textarea name="question_{{ q.id }}_text" rows="3"
+                        style="width:100%; padding:12px; border-radius:16px; border:1px solid #e6dde4;"
+                        placeholder="Ваш ответ..."></textarea>
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+
+      <div class="actions">
+        <button type="submit">Завершить тест</button>
+      </div>
+    </form>
+  </div>
+{% endblock %}

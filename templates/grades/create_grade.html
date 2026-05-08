@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Выставить оценку{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>Выставить оценку</h1>
+    <p>Выберите ученика, направление и поставьте балл.</p>
+  </div>
+
+  <div class="card">
+    <div class="actions">
+      <a class="btn" href="{% url 'grade_list' %}">← К оценкам</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+
+      {% if form.non_field_errors %}
+        <div class="card" style="background: #fff8fb; border: 1px solid #ead4df;">
+          {{ form.non_field_errors }}
+        </div>
+      {% endif %}
+
+      <button type="submit">Сохранить оценку</button>
+    </form>
+  </div>
+{% endblock %}

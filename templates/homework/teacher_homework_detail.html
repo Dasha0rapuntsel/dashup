@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}{{ homework.title }}{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>{{ homework.title }}</h1>
+    <p>{{ homework.course.title }}</p>
+  </div>
+
+  <div class="card">
+    <div class="actions">
+      <a class="btn" href="{% url 'homework_list' %}">← К управлению ДЗ</a>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Описание</h2>
+      <p>{{ homework.description }}</p>
+      {% if homework.due_date %}
+        <p class="muted">Сдать до: {{ homework.due_date|date:"d.m.Y" }}</p>
+      {% endif %}
+      {% if homework.lesson %}
+        <p class="muted">Занятие: {{ homework.lesson }}</p>
+      {% endif %}
+
+      {% if homework.attachments.all %}
+        <h3>Файлы</h3>
+        <ul class="clean-list">
+          {% for att in homework.attachments.all %}
+            <li>
+              <a class="link" href="{{ att.file.url }}" target="_blank">
+                {{ att.title|default:att.file.name }}
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+
+    <div class="card">
+      <h2>Ответы учеников</h2>
+      {% if statuses %}
+        <ul class="clean-list">
+          {% for s in statuses %}
+            <li>
+              <a class="link" href="{% url 'review_submission' s.id %}">
+                {% if s.student.first_name %}{{ s.student.first_name }} {{ s.student.last_name }}{% else %}{{ s.student.username }}{% endif %}
+              </a>
+              <span class="badge">{{ s.get_status_display }}</span>
+              {% if s.score %} — {{ s.score }}/{{ homework.max_score }}{% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="muted">Ответов пока нет.</p>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

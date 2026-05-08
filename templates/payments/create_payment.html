@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Создать оплату{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>Создать оплату</h1>
+    <p>Преподаватель создаёт оплату по выбранному направлению и ученику.</p>
+  </div>
+
+  <div class="card">
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Сохранить оплату</button>
+    </form>
+  </div>
+{% endblock %}

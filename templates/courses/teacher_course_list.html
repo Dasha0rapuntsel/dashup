@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Направления — DashUp{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>Мои направления</h1>
+    <p>Управляйте направлениями — индивидуальными и групповыми.</p>
+  </div>
+
+  <div style="margin-bottom:20px;">
+    <a class="btn btn-primary" href="{% url 'create_course' %}">Создать направление</a>
+  </div>
+
+  {% if courses %}
+    <div class="grid grid-3">
+      {% for course in courses %}
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:10px;">
+            <h3 style="margin:0;"><a class="link" href="{% url 'course_detail' course.id %}">{{ course.title }}</a></h3>
+            {% if course.format == "individual" %}
+              <span class="badge">индив.</span>
+            {% else %}
+              <span class="badge badge-info">группа</span>
+            {% endif %}
+          </div>
+          {% if course.description %}
+            <p class="muted" style="margin-bottom:8px;">{{ course.description|truncatechars:80 }}</p>
+          {% endif %}
+          <div class="muted">
+            {% with count=course.enrollments.count %}
+              {{ count }} ученик{{ count|pluralize:",,ов" }}
+            {% endwith %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="card">
+      <div class="empty-state">
+        <div class="empty-icon" style="color:var(--text-muted);"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></div>
+        <p>Направлений пока нет</p>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}

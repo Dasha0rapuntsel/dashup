@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Добавить вопросы{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>{{ quiz.title }}</h1>
+    <p>Добавляйте вопросы к тесту. Уже добавлено: {{ questions|length }}</p>
+  </div>
+
+  <div class="card">
+    <div class="actions">
+      <a class="btn" href="{% url 'quiz_detail' quiz.id %}">← К тесту</a>
+      <a class="btn" href="{% url 'quiz_list' %}">← К списку тестов</a>
+    </div>
+  </div>
+
+  {% if questions %}
+    <div class="card">
+      <h2>Добавленные вопросы</h2>
+      <ul class="clean-list">
+        {% for q in questions %}
+          <li>
+            <b>{{ q.order }}.</b> {{ q.text|truncatechars:80 }}
+            <span class="badge">{{ q.get_question_type_display }} — {{ q.points }} б.</span>
+            {% if q.question_type != "text" %}
+              <div class="muted" style="margin-top:6px;">
+                {% for c in q.choices.all %}
+                  {% if c.is_correct %}✅{% else %}⬜{% endif %} {{ c.text }}{% if not forloop.last %} &nbsp;|&nbsp; {% endif %}
+                {% endfor %}
+              </div>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  <div class="card">
+    <h2>Новый вопрос</h2>
+    <form method="post">
+      {% csrf_token %}
+
+      {{ q_form.as_p }}
+
+      <h3>Варианты ответа <span class="muted">(для вопросов с выбором)</span></h3>
+      {{ formset.management_form }}
+      {% for form in formset %}
+        <div style="padding:10px 0; border-bottom:1px solid #f0e6ec;">
+          {{ form.as_p }}
+        </div>
+      {% endfor %}
+
+      <div class="actions">
+        <button type="submit">Добавить вопрос</button>
+      </div>
+    </form>
+  </div>
+{% endblock %}

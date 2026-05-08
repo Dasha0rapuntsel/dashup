@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Привязка Telegram{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>Привязка Telegram</h1>
+    <p>Привяжите свой Telegram-аккаунт, чтобы получать уведомления о занятиях и домашних заданиях.</p>
+  </div>
+
+  <div class="card">
+    {% if profile.is_linked %}
+      <h2>Telegram привязан</h2>
+      <p>Ваш аккаунт привязан{% if profile.username %} (@{{ profile.username }}){% endif %}.</p>
+      <p class="muted">Дата привязки: {{ profile.linked_at|date:"d.m.Y H:i" }}</p>
+    {% else %}
+      <h2>Как привязать</h2>
+      <ol style="line-height: 2;">
+        <li>Нажмите кнопку ниже — система сгенерирует код привязки.</li>
+        <li>Откройте бота в Telegram.</li>
+        <li>Отправьте боту полученный код.</li>
+        <li>Готово — уведомления будут приходить в Telegram!</li>
+      </ol>
+
+      {% if profile.link_code %}
+        <div class="card" style="background: #f0faf2; border-color: #c3e6cb;">
+          <p><b>Ваш код привязки:</b></p>
+          <p style="font-size: 28px; font-weight: 700; letter-spacing: 3px; color: #2d7a3a;">
+            {{ profile.link_code }}
+          </p>
+          <p class="muted">Отправьте этот код боту в Telegram.</p>
+        </div>
+      {% endif %}
+
+      <form method="post">
+        {% csrf_token %}
+        <button type="submit">
+          {% if profile.link_code %}Сгенерировать новый код{% else %}Получить код привязки{% endif %}
+        </button>
+      </form>
+    {% endif %}
+  </div>
+{% endblock %}

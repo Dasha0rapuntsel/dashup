@@ -1,0 +1,568 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}DashUp{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #faf7fb;
+      --card: rgba(255,255,255,0.92);
+      --card-hover: rgba(255,255,255,1);
+      --rose: #e8d0df;
+      --blue: #d4e4f1;
+      --lilac: #e5dcf0;
+      --mint: #d4ede5;
+      --peach: #f3ddd3;
+      --accent: #9b7ea8;
+      --accent-light: #c9b5d4;
+      --text: #4a3f4e;
+      --text-light: #857a8a;
+      --text-muted: #b0a5b5;
+      --border: #e9e0ec;
+      --border-light: #f0eaf2;
+      --shadow: 0 8px 32px rgba(120,100,130,0.08);
+      --shadow-hover: 0 12px 40px rgba(120,100,130,0.14);
+      --radius: 20px;
+      --radius-sm: 14px;
+      --radius-xs: 10px;
+      --transition: 0.25s cubic-bezier(0.4,0,0.2,1);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Nunito', sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ===== DECORATIVE MATH BACKGROUND ===== */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        radial-gradient(ellipse at 10% 10%, rgba(232,208,223,0.4), transparent 45%),
+        radial-gradient(ellipse at 90% 15%, rgba(212,228,241,0.35), transparent 40%),
+        radial-gradient(ellipse at 50% 85%, rgba(229,220,240,0.3), transparent 45%),
+        radial-gradient(ellipse at 80% 70%, rgba(212,237,229,0.25), transparent 35%);
+    }
+    .math-bg {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      opacity: 0.035;
+      font-family: 'Caveat', cursive;
+      font-size: 22px;
+      color: var(--accent);
+      line-height: 2.2;
+      overflow: hidden;
+      pointer-events: none;
+      white-space: pre-wrap;
+      word-break: break-all;
+      padding: 20px;
+    }
+
+    /* ===== SIDEBAR ===== */
+    .layout { display: flex; min-height: 100vh; }
+    .sidebar {
+      width: 260px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(250,247,251,0.95) 100%);
+      border-right: 1px solid var(--border);
+      backdrop-filter: blur(16px);
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      z-index: 30;
+      display: flex;
+      flex-direction: column;
+      transition: transform var(--transition);
+      overflow-y: auto;
+    }
+    .sidebar-brand {
+      padding: 28px 24px 20px;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .sidebar-brand h1 {
+      font-size: 26px;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--accent), #7b6b8a);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.5px;
+    }
+    .sidebar-brand span {
+      font-size: 12px;
+      color: var(--text-muted);
+      display: block;
+      margin-top: 4px;
+    }
+    .sidebar-nav { padding: 16px 12px; flex: 1; }
+    .sidebar-section { margin-bottom: 24px; }
+    .sidebar-section-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--text-muted);
+      padding: 0 12px 8px;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 14px;
+      border-radius: var(--radius-sm);
+      color: var(--text-light);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all var(--transition);
+      margin-bottom: 2px;
+    }
+    .nav-item:hover {
+      background: rgba(155,126,168,0.08);
+      color: var(--accent);
+      transform: translateX(3px);
+    }
+    .nav-item.active {
+      background: linear-gradient(135deg, rgba(155,126,168,0.12), rgba(201,181,212,0.1));
+      color: var(--accent);
+    }
+    .nav-icon {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      opacity: 0.7;
+    }
+    .nav-item:hover .nav-icon, .nav-item.active .nav-icon { opacity: 1; }
+
+    .sidebar-footer {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border-light);
+    }
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .user-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--rose), var(--lilac));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 15px;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .user-name { font-size: 13px; font-weight: 700; }
+    .user-role { font-size: 11px; color: var(--text-muted); }
+
+    /* ===== MAIN CONTENT ===== */
+    .main { flex: 1; margin-left: 260px; padding: 32px 36px 60px; max-width: 1200px; }
+
+    /* ===== HEADER ===== */
+    .page-header {
+      margin-bottom: 28px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .page-header h1 {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .page-header p {
+      color: var(--text-light);
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    /* ===== CARDS ===== */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+      transition: all var(--transition);
+    }
+    .card:hover { box-shadow: var(--shadow-hover); }
+    .card h2 {
+      font-size: 17px;
+      font-weight: 800;
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+    .card h3 { font-size: 15px; font-weight: 700; margin-bottom: 12px; }
+
+    /* ===== STAT CARDS ===== */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      transition: all var(--transition);
+    }
+    .stat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+    .stat-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+      font-size: 20px;
+    }
+    .stat-icon.rose { background: linear-gradient(135deg, #f0d8e8, #e8c4da); }
+    .stat-icon.blue { background: linear-gradient(135deg, #d8eaf5, #c4dced); }
+    .stat-icon.lilac { background: linear-gradient(135deg, #e8ddf3, #d8cae8); }
+    .stat-icon.mint { background: linear-gradient(135deg, #d4ede5, #bfe3d8); }
+    .stat-icon.peach { background: linear-gradient(135deg, #f3ddd3, #ecc8b8); }
+    .stat-value {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .stat-label { font-size: 13px; color: var(--text-muted); font-weight: 600; }
+
+    /* ===== GRID ===== */
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; margin-bottom: 20px; }
+    .grid-3 { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+
+    /* ===== TABLE ===== */
+    .data-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+    .data-table th {
+      text-align: left;
+      padding: 12px 16px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-muted);
+      border-bottom: 2px solid var(--border);
+    }
+    .data-table td {
+      padding: 14px 16px;
+      font-size: 14px;
+      border-bottom: 1px solid var(--border-light);
+      vertical-align: middle;
+    }
+    .data-table tr:hover td { background: rgba(155,126,168,0.03); }
+
+    /* ===== LIST ===== */
+    .item-list { list-style: none; }
+    .item-list li {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border-light);
+      transition: all var(--transition);
+    }
+    .item-list li:last-child { border-bottom: none; }
+    .item-list li:hover { background: rgba(155,126,168,0.04); padding-left: 20px; }
+
+    /* ===== BUTTONS ===== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all var(--transition);
+      font-family: inherit;
+      line-height: 1.3;
+    }
+    .btn:hover { background: #faf5fc; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(155,126,168,0.12); }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #8a6b9a);
+      color: #fff;
+      border-color: transparent;
+    }
+    .btn-primary:hover { box-shadow: 0 6px 20px rgba(155,126,168,0.3); transform: translateY(-2px); }
+    button, input[type="submit"] {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, var(--accent), #8a6b9a);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all var(--transition);
+      font-family: inherit;
+    }
+    button:hover, input[type="submit"]:hover { box-shadow: 0 6px 20px rgba(155,126,168,0.3); transform: translateY(-2px); }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+
+    /* ===== BADGE ===== */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+      background: rgba(155,126,168,0.1);
+      color: var(--accent);
+    }
+    .badge-success { background: rgba(76,175,80,0.1); color: #2e7d32; }
+    .badge-warning { background: rgba(255,152,0,0.1); color: #e65100; }
+    .badge-danger { background: rgba(244,67,54,0.1); color: #c62828; }
+    .badge-info { background: rgba(33,150,243,0.1); color: #1565c0; }
+
+    /* ===== FORMS ===== */
+    form p { margin-bottom: 18px; }
+    label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 700; color: var(--text-light); }
+    input[type="text"], input[type="number"], input[type="date"], input[type="time"],
+    input[type="password"], input[type="file"], input[type="email"],
+    select, textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid var(--border);
+      background: #fff;
+      font-size: 14px;
+      font-family: inherit;
+      color: var(--text);
+      outline: none;
+      transition: all var(--transition);
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent-light);
+      box-shadow: 0 0 0 4px rgba(155,126,168,0.1);
+    }
+    textarea { min-height: 120px; resize: vertical; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+    /* ===== LINK ===== */
+    a.link { color: var(--accent); text-decoration: none; font-weight: 700; transition: color var(--transition); }
+    a.link:hover { color: #7b5e8a; }
+    .muted { color: var(--text-muted); font-size: 13px; }
+
+    /* ===== EMPTY STATE ===== */
+    .empty-state {
+      text-align: center;
+      padding: 48px 24px;
+    }
+    .empty-state .empty-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      opacity: 0.4;
+    }
+    .empty-state p { color: var(--text-muted); font-size: 15px; }
+
+    /* ===== MOBILE ===== */
+    .mobile-toggle {
+      display: none;
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      z-index: 40;
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.9);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(8px);
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 20px;
+    }
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.3);
+      z-index: 25;
+    }
+    @media (max-width: 900px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .main { margin-left: 0; padding: 24px 16px 60px; }
+      .mobile-toggle { display: flex; }
+      .overlay.show { display: block; }
+      .stats-grid { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+      .grid { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+
+    /* ===== ANIMATIONS ===== */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .card, .stat-card { animation: fadeUp 0.4s ease-out both; }
+    .stat-card:nth-child(2) { animation-delay: 0.05s; }
+    .stat-card:nth-child(3) { animation-delay: 0.1s; }
+    .stat-card:nth-child(4) { animation-delay: 0.15s; }
+    .stat-card:nth-child(5) { animation-delay: 0.2s; }
+  </style>
+</head>
+<body>
+  <!-- Decorative math background -->
+  <div class="math-bg" aria-hidden="true">∑ f(x) = ax² + bx + c   ∫ dx   π ≈ 3.14159   √2   Δy/Δx   lim   ∞   sin θ   cos α   log₂n   n!   ∈ ∀   ∃   ⊂   ∪   ∩   ≤   ≥   ≠   ≡   →   ⟹   ∂f/∂x   ∇   ∑ᵢ₌₁ⁿ   ∏   ∫₀¹   dx/dt   e^x   ln x   √(a²+b²)   (a+b)²   n²+1   2ⁿ   O(n log n)   P(A|B)   μ ± σ   χ²   Σxᵢ/n   ∮   ∝   ℝ   ℤ   ℕ   ∅   ⊕   ⊗   ∧   ∨   ¬   ∘   ×   ÷   ±   ∓   ≈   ∼   ≅   ∝   α β γ δ ε ζ η θ ι κ λ μ ν ξ π ρ σ τ φ ψ ω   d²y/dx²   r = √(x²+y²)   V = πr²h   S = 4πr²   E = mc²   F = ma   a² + b² = c²   (n choose k)   P(X=k)   ∑ aₙxⁿ   lim_{n→∞}   ∫∫   ∂²/∂x²   det(A)   tr(A)   ||v||   v·w   ∇×F   ∇·F   ∑ f(x) = ax² + bx + c   ∫ dx   π ≈ 3.14159   √2   Δy/Δx   lim   ∞   sin θ   cos α   log₂n   n!   ∈ ∀   ∃   ⊂   ∪   ∩   ≤   ≥   ≠   ≡   →   ⟹   ∂f/∂x   ∇   ∑ᵢ₌₁ⁿ   ∏   ∫₀¹   dx/dt   e^x   ln x   √(a²+b²)   (a+b)²   n²+1   2ⁿ   O(n log n)   P(A|B)   μ ± σ   χ²   Σxᵢ/n   ∮   ∝   ℝ   ℤ   ℕ   ∅   ⊕   ⊗   ∧   ∨   ¬   ∘   ×   ÷   ±   ∓   ≈   ∼   ≅   ∝   α β γ δ ε ζ η θ ι κ λ μ ν ξ π ρ σ τ φ ψ ω   d²y/dx²   r = √(x²+y²)   V = πr²h   S = 4πr²   E = mc²   F = ma</div>
+
+  <div class="mobile-toggle" onclick="toggleSidebar()">☰</div>
+  <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+  <div class="layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <h1>DashUp</h1>
+        <span>Учебная платформа</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        {% if request.user.is_authenticated %}
+
+          <div class="sidebar-section">
+            <div class="sidebar-section-title">Навигация</div>
+            <a class="nav-item" href="{% url 'portal' %}">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              Главная
+            </a>
+
+            {% if request.user.role == "teacher" %}
+              <a class="nav-item" href="{% url 'teacher_dashboard' %}">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                Мой кабинет
+              </a>
+            {% else %}
+              <a class="nav-item" href="{% url 'student_dashboard' %}">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                Мой кабинет
+              </a>
+            {% endif %}
+          </div>
+
+          <div class="sidebar-section">
+            <div class="sidebar-section-title">Обучение</div>
+            <a class="nav-item" href="{% url 'lesson_schedule' %}">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              Расписание
+            </a>
+            {% if request.user.role == "teacher" %}
+              <a class="nav-item" href="{% url 'teacher_course_list' %}">
+            {% else %}
+              <a class="nav-item" href="{% url 'course_list' %}">
+            {% endif %}
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+              Направления
+            </a>
+            <a class="nav-item" href="{% url 'homework_list' %}">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+              Домашние задания
+            </a>
+            <a class="nav-item" href="{% url 'grade_list' %}">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              Оценки
+            </a>
+            <a class="nav-item" href="{% url 'quiz_list' %}">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              Тесты
+            </a>
+          </div>
+
+          <div class="sidebar-section">
+            <div class="sidebar-section-title">Прочее</div>
+            <a class="nav-item" href="{% url 'payment_list' %}">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+              Оплаты
+            </a>
+            {% if request.user.role == "student" %}
+              <a class="nav-item" href="{% url 'telegram_link' %}">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                Telegram
+              </a>
+            {% endif %}
+            {% if request.user.is_staff or request.user.is_superuser %}
+              <a class="nav-item" href="/admin/">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+                Админ-панель
+              </a>
+            {% endif %}
+          </div>
+
+        {% else %}
+          <div class="sidebar-section">
+            <a class="nav-item" href="{% url 'login' %}">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+              Войти
+            </a>
+            <a class="nav-item" href="{% url 'register' %}">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+              Регистрация
+            </a>
+          </div>
+        {% endif %}
+      </nav>
+
+      {% if request.user.is_authenticated %}
+        <div class="sidebar-footer">
+          <div class="user-info">
+            <div class="user-avatar">
+              {% if request.user.first_name %}{{ request.user.first_name|first|upper }}{% else %}{{ request.user.username|first|upper }}{% endif %}
+            </div>
+            <div>
+              <div class="user-name">
+                {% if request.user.first_name %}{{ request.user.first_name }} {{ request.user.last_name }}{% else %}{{ request.user.username }}{% endif %}
+              </div>
+              <div class="user-role">{{ request.user.get_role_display }}</div>
+            </div>
+          </div>
+          <div style="margin-top: 12px;">
+            <a class="btn" href="{% url 'logout' %}" style="width:100%; font-size:12px; padding:8px 14px;">Выйти</a>
+          </div>
+        </div>
+      {% endif %}
+    </aside>
+
+    <main class="main">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+
+  <script>
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+      document.getElementById('overlay').classList.toggle('show');
+    }
+  </script>
+</body>
+</html>

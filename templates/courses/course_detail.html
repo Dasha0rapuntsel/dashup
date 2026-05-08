@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}{{ course.title }}{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>{{ course.title }}</h1>
+    <p>{{ course.description|default:"Описание пока не заполнено." }}</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>О направлении</h2>
+      <p><b>Предмет:</b> {{ course.subject_name }}</p>
+      <p><b>Уровень:</b> {{ course.level }}</p>
+      <p><b>Формат:</b> {{ course.get_format_display }}</p>
+      {% if course.group_name %}
+        <p><b>Группа / ученик:</b> {{ course.group_name }}</p>
+      {% endif %}
+    </div>
+
+    <div class="card">
+      <h2>Ученики</h2>
+      {% if students %}
+        <ul class="clean-list">
+          {% for student in students %}
+            <li>
+              {% if student.first_name or student.last_name %}
+                {{ student.first_name }} {{ student.last_name }}
+              {% else %}
+                {{ student.username }}
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="muted">Ученики пока не добавлены.</p>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

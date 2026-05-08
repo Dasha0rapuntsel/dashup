@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Мои оценки{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>Мои оценки</h1>
+    <p>Все оценки по вашим направлениям.</p>
+  </div>
+
+  <div class="card">
+    {% if grades %}
+      <ul class="clean-list">
+        {% for g in grades %}
+          <li>
+            <a class="link" href="{% url 'grade_detail' g.id %}">
+              {{ g.score }}/{{ g.max_score }} — {{ g.course.title }}
+            </a>
+            <div class="muted">
+              {% if g.lesson %}Занятие: {{ g.lesson }} — {% endif %}
+              {{ g.created_at|date:"d.m.Y" }}
+              {% if g.comment %}<br>Комментарий: {{ g.comment }}{% endif %}
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="muted">Оценок пока нет.</p>
+    {% endif %}
+  </div>
+{% endblock %}

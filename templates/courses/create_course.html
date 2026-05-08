@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Создать направление{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>Создать направление</h1>
+    <p>Укажите предмет, формат и учеников — и направление будет создано прямо на платформе.</p>
+  </div>
+
+  <div class="card">
+    <div class="actions">
+      <a class="btn" href="{% url 'teacher_course_list' %}">← К направлениям</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Сохранить направление</button>
+    </form>
+  </div>
+{% endblock %}

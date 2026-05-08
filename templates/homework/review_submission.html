@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Проверка ДЗ{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>Проверка домашнего задания</h1>
+    <p>{{ homework.title }} —
+      {% if status_obj.student.first_name %}{{ status_obj.student.first_name }} {{ status_obj.student.last_name }}{% else %}{{ status_obj.student.username }}{% endif %}
+    </p>
+  </div>
+
+  <div class="card">
+    <div class="actions">
+      <a class="btn" href="{% url 'homework_detail' homework.id %}">← К домашнему заданию</a>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Ответ ученика</h2>
+      <p><b>Статус:</b> <span class="badge">{{ status_obj.get_status_display }}</span></p>
+      <p>{{ status_obj.answer_text|default:"Текст ответа не добавлен" }}</p>
+
+      {% if status_obj.submission_attachments.all %}
+        <h3>Файлы ученика</h3>
+        <ul class="clean-list">
+          {% for att in status_obj.submission_attachments.all %}
+            <li>
+              <a class="link" href="{{ att.file.url }}" target="_blank">
+                {{ att.title|default:att.file.name }}
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+
+    <div class="card">
+      <h2>Проверка</h2>
+      <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Сохранить проверку</button>
+      </form>
+    </div>
+  </div>
+{% endblock %}

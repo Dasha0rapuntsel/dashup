@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Регистрация — DashUp</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --accent: #9b7ea8;
+      --text: #4a3f4e;
+      --text-light: #857a8a;
+      --text-muted: #b0a5b5;
+      --border: #e9e0ec;
+      --bg: #faf7fb;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Nunito', sans-serif;
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(ellipse at 20% 20%, rgba(232,208,223,0.5), transparent 50%),
+        radial-gradient(ellipse at 80% 30%, rgba(212,228,241,0.4), transparent 45%),
+        radial-gradient(ellipse at 50% 80%, rgba(229,220,240,0.35), transparent 50%),
+        var(--bg);
+    }
+    .math-float {
+      position: fixed; inset: 0; z-index: 0; opacity: 0.04;
+      font-family: 'Caveat', cursive; font-size: 24px; color: var(--accent);
+      line-height: 2.4; overflow: hidden; pointer-events: none;
+      white-space: pre-wrap; padding: 30px;
+    }
+    .reg-card {
+      position: relative; z-index: 1; width: 100%; max-width: 480px; margin: 20px;
+      background: rgba(255,255,255,0.92); border: 1px solid var(--border);
+      border-radius: 28px; padding: 44px 40px;
+      box-shadow: 0 16px 48px rgba(120,100,130,0.12);
+      backdrop-filter: blur(12px);
+      animation: fadeIn 0.5s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .reg-card h1 {
+      font-size: 28px; font-weight: 800;
+      background: linear-gradient(135deg, var(--accent), #7b6b8a);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; margin-bottom: 4px;
+    }
+    .subtitle { color: var(--text-light); font-size: 14px; margin-bottom: 28px; }
+    .error-msg {
+      padding: 12px 16px; background: rgba(244,67,54,0.08);
+      border: 1px solid rgba(244,67,54,0.2); border-radius: 14px;
+      color: #c62828; font-size: 13px; font-weight: 600; margin-bottom: 18px;
+    }
+    label { display: block; font-size: 13px; font-weight: 700; color: var(--text-light); margin-bottom: 6px; }
+    input[type="text"], input[type="password"], input[type="email"], select {
+      width: 100%; padding: 13px 16px; border: 1.5px solid var(--border);
+      border-radius: 14px; font-family: inherit; font-size: 14px;
+      color: var(--text); outline: none; background: #fff;
+      transition: 0.2s; margin-bottom: 16px;
+    }
+    input:focus, select:focus { border-color: #c9b5d4; box-shadow: 0 0 0 4px rgba(155,126,168,0.1); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    button {
+      width: 100%; padding: 14px; border: none; border-radius: 999px;
+      background: linear-gradient(135deg, var(--accent), #8a6b9a);
+      color: #fff; font-family: inherit; font-size: 15px;
+      font-weight: 700; cursor: pointer; transition: 0.25s; margin-top: 4px;
+    }
+    button:hover { box-shadow: 0 8px 24px rgba(155,126,168,0.35); transform: translateY(-2px); }
+    .login-link {
+      text-align: center; margin-top: 20px; font-size: 14px; color: var(--text-muted);
+    }
+    .login-link a { color: var(--accent); text-decoration: none; font-weight: 700; }
+    .login-link a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="math-float" aria-hidden="true">∑ f(x) = ax² + bx + c   ∫ dx   π ≈ 3.14   √2   sin θ   cos α   log₂n   n!   ∂f/∂x   e^x   ln x   a² + b² = c²   E = mc²   Δy/Δx   α β γ δ ε ζ η θ λ μ π σ φ ψ ω   ∑ᵢ₌₁ⁿ   ∏   ∫₀¹   dx/dt   √(a²+b²)   2ⁿ   O(n log n)   ℝ ℤ ℕ ∅ ⊕</div>
+
+  <div class="reg-card">
+    <h1>Регистрация</h1>
+    <p class="subtitle">Создайте аккаунт на платформе DashUp</p>
+
+    {% if errors %}
+      <div class="error-msg">
+        {% for e in errors %}<div>{{ e }}</div>{% endfor %}
+      </div>
+    {% endif %}
+
+    <form method="post">
+      {% csrf_token %}
+
+      <div class="form-row">
+        <div>
+          <label for="first_name">Имя</label>
+          <input type="text" id="first_name" name="first_name" value="{{ form_data.first_name|default:'' }}" required placeholder="Иван">
+        </div>
+        <div>
+          <label for="last_name">Фамилия</label>
+          <input type="text" id="last_name" name="last_name" value="{{ form_data.last_name|default:'' }}" required placeholder="Иванов">
+        </div>
+      </div>
+
+      <label for="username">Логин</label>
+      <input type="text" id="username" name="username" value="{{ form_data.username|default:'' }}" required placeholder="Придумайте логин">
+
+      <label for="email">E-mail</label>
+      <input type="email" id="email" name="email" value="{{ form_data.email|default:'' }}" placeholder="name@example.com">
+
+      <label for="password">Пароль</label>
+      <input type="password" id="password" name="password" required placeholder="Минимум 6 символов">
+
+      <label for="password2">Повторите пароль</label>
+      <input type="password" id="password2" name="password2" required placeholder="Ещё раз">
+
+      <label for="role">Роль</label>
+      <select id="role" name="role">
+        <option value="student">Ученик</option>
+        <option value="teacher">Преподаватель</option>
+      </select>
+
+      <button type="submit">Зарегистрироваться</button>
+    </form>
+
+    <div class="login-link">
+      Уже есть аккаунт? <a href="{% url 'login' %}">Войти</a>
+    </div>
+  </div>
+</body>
+</html>

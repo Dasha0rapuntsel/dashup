@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Импорт теста из JSON — DashUp{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>Импорт теста из JSON</h1>
+    <p>Загрузите JSON-файл или вставьте JSON — тест с вопросами и ответами создастся автоматически.</p>
+  </div>
+
+  <div style="margin-bottom:20px;">
+    <a class="btn" href="{% url 'quiz_list' %}">← К тестам</a>
+  </div>
+
+  {% if error %}
+    <div class="card" style="background:rgba(244,67,54,0.05); border-color:rgba(244,67,54,0.2);">
+      <p style="color:#c62828; font-weight:700;">{{ error }}</p>
+    </div>
+  {% endif %}
+
+  {% if success %}
+    <div class="card" style="background:rgba(76,175,80,0.05); border-color:rgba(76,175,80,0.2);">
+      <p style="color:#2e7d32; font-weight:700;">{{ success }}</p>
+    </div>
+  {% endif %}
+
+  <div class="grid">
+    <div class="card">
+      <h2>Загрузить тест</h2>
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <p>
+          <label for="course">Направление</label>
+          <select name="course" id="course" required>
+            <option value="">— Выберите —</option>
+            {% for c in courses %}
+              <option value="{{ c.id }}">{{ c.title }}</option>
+            {% endfor %}
+          </select>
+        </p>
+        <p>
+          <label for="json_file">JSON-файл</label>
+          <input type="file" name="json_file" id="json_file" accept=".json">
+        </p>
+        <p>
+          <label for="json_text">Или вставьте JSON</label>
+          <textarea name="json_text" id="json_text" rows="12" placeholder='{"title": "Мой тест", "questions": [...]}'></textarea>
+        </p>
+        <button type="submit">Импортировать тест</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>Формат JSON</h2>
+      <p style="color:var(--text-light); line-height:1.6; margin-bottom:16px;">
+        Создайте JSON-файл по следующему шаблону. Типы вопросов: <code>single</code> (один ответ), <code>multiple</code> (несколько), <code>text</code> (текстовый).
+      </p>
+      <div style="background:#f8f5fa; border:1px solid var(--border); border-radius:var(--radius-sm); padding:16px; font-family:monospace; font-size:12px; line-height:1.7; overflow-x:auto; white-space:pre;">{
+  "title": "Тест по алгебре",
+  "description": "Проверочная работа",
+  "time_limit_minutes": 30,
+  "questions": [
+    {
+      "text": "Чему равно 2 + 2?",
+      "type": "single",
+      "points": 1,
+      "choices": [
+        {"text": "3", "correct": false},
+        {"text": "4", "correct": true},
+        {"text": "5", "correct": false}
+      ]
+    },
+    {
+      "text": "Какие числа простые?",
+      "type": "multiple",
+      "points": 2,
+      "choices": [
+        {"text": "2", "correct": true},
+        {"text": "4", "correct": false},
+        {"text": "7", "correct": true}
+      ]
+    },
+    {
+      "text": "Запишите формулу",
+      "type": "text",
+      "points": 3,
+      "choices": []
+    }
+  ]
+}</div>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}День занятий{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>Занятия на день</h1>
+    <p>Дата: <b>{{ selected_date }}</b></p>
+  </div>
+
+  <div class="card">
+    <div class="actions">
+      <a class="btn" href="{% url 'lesson_schedule_month' selected_date.year selected_date.month %}">
+        ← Вернуться к месяцу
+      </a>
+
+      {% if request.user.role == "teacher" %}
+        <a class="btn-primary" href="{% url 'create_lesson_on_date' selected_date.year selected_date.month selected_date.day %}">
+          Добавить занятие
+        </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 style="margin-bottom: 16px;">Список занятий</h2>
+
+    {% if lessons %}
+      {% for lesson in lessons %}
+        <div style="
+          padding: 16px 18px;
+          border: 1px solid #eadbe4;
+          border-radius: 18px;
+          margin-bottom: 12px;
+          background: #fff;
+          box-shadow: 0 6px 16px rgba(183, 169, 179, 0.08);
+        ">
+          <div style="display: flex; justify-content: space-between; gap: 12px; align-items: center; flex-wrap: wrap;">
+            <div style="font-size: 16px; font-weight: 700; color: #5f4d5a;">
+              {{ lesson.time_range }} — {{ lesson.course.title }}
+            </div>
+
+            <div>
+              <span class="badge">{{ lesson.get_status_display }}</span>
+              <span class="badge">
+                {% if lesson.lesson_type == "recurring" %}
+                  постоянное
+                {% else %}
+                  разовое
+                {% endif %}
+              </span>
+              {% if lesson.is_rescheduled %}
+                <span class="badge">перенесено</span>
+              {% endif %}
+            </div>
+          </div>
+
+          {% if lesson.title %}
+            <div class="muted" style="margin-top: 8px;">
+              {{ lesson.title }}
+            </div>
+          {% endif %}
+
+          {% if lesson.is_rescheduled %}
+            <div class="muted" style="margin-top: 8px;">
+              Перенесено с {{ lesson.original_date }} {{ lesson.original_start_time|time:"H:i" }}
+            </div>
+          {% endif %}
+
+          {% if request.user.role == "teacher" %}
+            <div class="actions">
+              <a class="btn" href="{% url 'edit_lesson' lesson.id %}">Изменить / перенести / отменить</a>
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    {% else %}
+      <p class="muted">На этот день занятий нет.</p>
+    {% endif %}
+  </div>
+{% endblock %}

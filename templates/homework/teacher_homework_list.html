@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Домашние задания — DashUp{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>Домашние задания</h1>
+    <p>Создавайте задания и проверяйте ответы учеников.</p>
+  </div>
+
+  <div style="margin-bottom:20px;">
+    <a class="btn btn-primary" href="{% url 'create_homework' %}">Создать ДЗ</a>
+  </div>
+
+  {% if homeworks %}
+    <div class="card">
+      <div style="overflow-x:auto;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Задание</th>
+              <th>Направление</th>
+              <th>Срок сдачи</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for hw in homeworks %}
+              <tr>
+                <td><a class="link" href="{% url 'homework_detail' hw.id %}">{{ hw.title }}</a></td>
+                <td class="muted">{{ hw.course.title }}</td>
+                <td>{% if hw.due_date %}{{ hw.due_date|date:"d.m.Y" }}{% else %}<span class="muted">—</span>{% endif %}</td>
+                <td><a class="btn" href="{% url 'homework_detail' hw.id %}" style="font-size:12px; padding:6px 14px;">Открыть</a></td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  {% else %}
+    <div class="card">
+      <div class="empty-state">
+        <div class="empty-icon" style="color:var(--text-muted);"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+        <p>Домашних заданий пока нет</p>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}

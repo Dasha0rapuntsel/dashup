@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Тесты — DashUp{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>Тесты</h1>
+    <p>Доступные тесты по вашим направлениям. Результаты проверяются автоматически.</p>
+  </div>
+
+  {% if quiz_data %}
+    <div class="grid grid-3">
+      {% for item in quiz_data %}
+        <div class="card" style="display:flex; flex-direction:column;">
+          <div style="flex:1;">
+            <div style="display:flex; justify-content:space-between; align-items:start; gap:8px; margin-bottom:12px;">
+              <h3 style="margin:0;">{{ item.quiz.title }}</h3>
+              {% if item.is_finished %}
+                <span class="badge badge-success">пройден</span>
+              {% else %}
+                <span class="badge badge-warning">не пройден</span>
+              {% endif %}
+            </div>
+            <div class="muted" style="margin-bottom:8px;">{{ item.quiz.course.title }}</div>
+            <div class="muted">{{ item.quiz.question_count }} вопросов{% if item.quiz.time_limit_minutes %} · {{ item.quiz.time_limit_minutes }} мин{% endif %}</div>
+            {% if item.attempt %}
+              <div style="margin-top:10px; font-size:22px; font-weight:800;">
+                {{ item.attempt.score }}<span class="muted" style="font-size:14px;">/{{ item.attempt.max_score }}</span>
+              </div>
+            {% endif %}
+          </div>
+          <div class="actions">
+            {% if item.is_finished %}
+              <a class="btn" href="{% url 'quiz_result' item.attempt.id %}" style="font-size:12px;">Результат</a>
+              <a class="btn" href="{% url 'take_quiz' item.quiz.id %}" style="font-size:12px;">Пройти снова</a>
+            {% else %}
+              <a class="btn btn-primary" href="{% url 'take_quiz' item.quiz.id %}" style="font-size:12px;">Пройти тест</a>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="card">
+      <div class="empty-state">
+        <div class="empty-icon" style="color:var(--text-muted);"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+        <p>Доступных тестов пока нет</p>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}

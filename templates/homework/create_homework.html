@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Создать домашнее задание{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>Создать домашнее задание</h1>
+    <p>Выберите направление, укажите задание и прикрепите файл.</p>
+  </div>
+
+  <div class="card">
+    <div class="actions">
+      <a class="btn" href="{% url 'homework_list' %}">← К домашним заданиям</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Создать ДЗ</button>
+    </form>
+  </div>
+{% endblock %}

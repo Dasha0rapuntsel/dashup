@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Оплата{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>Оплата</h1>
+    <p><b>{{ payment.student.username }}</b> — {{ payment.course.title }}</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Информация</h2>
+      <p><b>Сумма:</b> {{ payment.amount }}</p>
+      <p><b>Срок:</b> {{ payment.due_date }}</p>
+      <p><b>Статус:</b> {{ payment.get_status_display }}</p>
+      {% if payment.period_label %}
+        <p><b>За что:</b> {{ payment.period_label }}</p>
+      {% endif %}
+    </div>
+
+    <div class="card">
+      <h2>Отметить как оплачено</h2>
+      <form method="post" action="{% url 'mark_payment_paid' payment.id %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Сохранить оплату</button>
+      </form>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Мои ДЗ — DashUp{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>Мои домашние задания</h1>
+    <p>Все домашние задания по вашим направлениям.</p>
+  </div>
+
+  {% if statuses %}
+    <div class="card">
+      <div style="overflow-x:auto;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Задание</th>
+              <th>Направление</th>
+              <th>Статус</th>
+              <th>Балл</th>
+              <th>Срок</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for s in statuses %}
+              <tr>
+                <td><a class="link" href="{% url 'homework_detail' s.homework.id %}">{{ s.homework.title }}</a></td>
+                <td class="muted">{{ s.homework.course.title }}</td>
+                <td>
+                  {% if s.status == "checked" %}
+                    <span class="badge badge-success">Проверено</span>
+                  {% elif s.status == "submitted" %}
+                    <span class="badge badge-info">Отправлено</span>
+                  {% else %}
+                    <span class="badge badge-warning">Не сдано</span>
+                  {% endif %}
+                </td>
+                <td>{% if s.score is not None %}{{ s.score }}/{{ s.homework.max_score }}{% else %}<span class="muted">—</span>{% endif %}</td>
+                <td>{% if s.homework.due_date %}{{ s.homework.due_date|date:"d.m" }}{% else %}<span class="muted">—</span>{% endif %}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  {% else %}
+    <div class="card">
+      <div class="empty-state">
+        <div class="empty-icon" style="color:var(--text-muted);"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+        <p>Домашних заданий пока нет</p>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}

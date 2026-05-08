@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Оплаты — DashUp{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>Оплаты</h1>
+    <p>Создавайте и отслеживайте оплаты учеников.</p>
+  </div>
+
+  <div style="margin-bottom:20px;">
+    <a class="btn btn-primary" href="{% url 'create_payment' %}">Создать оплату</a>
+  </div>
+
+  {% if payments %}
+    <div class="card">
+      <div style="overflow-x:auto;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Ученик</th>
+              <th>Направление</th>
+              <th>Сумма</th>
+              <th>Срок</th>
+              <th>Статус</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for p in payments %}
+              <tr>
+                <td>
+                  {% if p.student.first_name %}{{ p.student.first_name }} {{ p.student.last_name }}{% else %}{{ p.student.username }}{% endif %}
+                </td>
+                <td class="muted">{{ p.course.title }}</td>
+                <td style="font-weight:700;">{{ p.amount }} ₽</td>
+                <td>{{ p.due_date|date:"d.m.Y" }}</td>
+                <td>
+                  {% if p.status == "paid" %}
+                    <span class="badge badge-success">Оплачено</span>
+                  {% elif p.status == "overdue" %}
+                    <span class="badge badge-danger">Просрочено</span>
+                  {% else %}
+                    <span class="badge badge-warning">Ожидается</span>
+                  {% endif %}
+                </td>
+                <td><a class="btn" href="{% url 'payment_detail' p.id %}" style="font-size:12px; padding:6px 14px;">Подробнее</a></td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  {% else %}
+    <div class="card">
+      <div class="empty-state">
+        <div class="empty-icon" style="color:var(--text-muted);"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div>
+        <p>Оплат пока нет</p>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Оценка{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>Оценка</h1>
+    <p>{{ grade.course.title }}</p>
+  </div>
+
+  <div class="card">
+    <div class="actions">
+      <a class="btn" href="{% url 'grade_list' %}">← К оценкам</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <p><b>Ученик:</b>
+      {% if grade.student.first_name %}
+        {{ grade.student.first_name }} {{ grade.student.last_name }}
+      {% else %}
+        {{ grade.student.username }}
+      {% endif %}
+    </p>
+    <p><b>Направление:</b> {{ grade.course.title }}</p>
+    {% if grade.lesson %}
+      <p><b>Занятие:</b> {{ grade.lesson }}</p>
+    {% endif %}
+    <p><b>Балл:</b> {{ grade.score }} / {{ grade.max_score }}</p>
+    {% if grade.comment %}
+      <p><b>Комментарий:</b> {{ grade.comment }}</p>
+    {% endif %}
+    <p class="muted">Дата: {{ grade.created_at|date:"d.m.Y H:i" }}</p>
+  </div>
+{% endblock %}

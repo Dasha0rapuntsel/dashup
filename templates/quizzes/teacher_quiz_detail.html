@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}{{ quiz.title }}{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>{{ quiz.title }}</h1>
+    <p>{{ quiz.course.title }} — {{ quiz.question_count }} вопросов — макс. {{ quiz.max_score }} б.</p>
+  </div>
+
+  <div class="card">
+    <div class="actions">
+      <a class="btn" href="{% url 'quiz_list' %}">← К тестам</a>
+      <a class="btn-primary" href="{% url 'add_question' quiz.id %}">Добавить вопросы</a>
+    </div>
+  </div>
+
+  {% if quiz.description %}
+    <div class="card">
+      <h2>Описание</h2>
+      <p>{{ quiz.description }}</p>
+    </div>
+  {% endif %}
+
+  <div class="card">
+    <h2>Вопросы</h2>
+    {% for q in quiz.questions.all %}
+      <div style="padding:12px 0; border-bottom:1px solid #f0e6ec;">
+        <b>{{ q.order }}.</b> {{ q.text }}
+        <span class="badge">{{ q.get_question_type_display }} — {{ q.points }} б.</span>
+        {% if q.question_type != "text" %}
+          <div class="muted" style="margin-top:4px;">
+            {% for c in q.choices.all %}
+              {% if c.is_correct %}✅{% else %}⬜{% endif %} {{ c.text }}{% if not forloop.last %} | {% endif %}
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+    {% empty %}
+      <p class="muted">Вопросов пока нет.</p>
+    {% endfor %}
+  </div>
+
+  <div class="card">
+    <h2>Результаты учеников</h2>
+    {% if attempts %}
+      <ul class="clean-list">
+        {% for a in attempts %}
+          <li>
+            <a class="link" href="{% url 'quiz_result' a.id %}">
+              {{ a.student.first_name }} {{ a.student.last_name }}
+              {% if not a.student.first_name %}({{ a.student.username }}){% endif %}
+              — {{ a.score }}/{{ a.max_score }}
+            </a>
+            <div class="muted">{{ a.finished_at|date:"d.m.Y H:i" }}</div>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="muted">Пока никто не прошёл тест.</p>
+    {% endif %}
+  </div>
+{% endblock %}

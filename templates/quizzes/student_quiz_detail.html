@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}{{ quiz.title }}{% endblock %}
+
+{% block content %}
+  <div class="page-header">
+    <h1>{{ quiz.title }}</h1>
+    <p>{{ quiz.course.title }} — {{ quiz.question_count }} вопросов</p>
+  </div>
+
+  <div class="card">
+    <div class="actions">
+      <a class="btn" href="{% url 'quiz_list' %}">← К тестам</a>
+    </div>
+  </div>
+
+  {% if quiz.description %}
+    <div class="card">
+      <p>{{ quiz.description }}</p>
+    </div>
+  {% endif %}
+
+  <div class="card">
+    {% if attempt %}
+      <h2>Ваш результат</h2>
+      <p><b>Баллы:</b> {{ attempt.score }} / {{ attempt.max_score }}</p>
+      <p class="muted">Дата: {{ attempt.finished_at|date:"d.m.Y H:i" }}</p>
+      <div class="actions">
+        <a class="btn" href="{% url 'quiz_result' attempt.id %}">Подробный результат</a>
+        <a class="btn-primary" href="{% url 'take_quiz' quiz.id %}">Пройти заново</a>
+      </div>
+    {% else %}
+      <p>Вы ещё не проходили этот тест.</p>
+      {% if quiz.time_limit_minutes %}
+        <p class="muted">Ограничение по времени: {{ quiz.time_limit_minutes }} мин.</p>
+      {% endif %}
+      <div class="actions">
+        <a class="btn-primary" href="{% url 'take_quiz' quiz.id %}">Пройти тест</a>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}
