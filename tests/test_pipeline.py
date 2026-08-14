@@ -25,6 +25,7 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual("AUTO_CLOSE", result.action)
         self.assertEqual("notifications", result.theme)
         self.assertEqual("KB-001", result.kb_article_id)
+        self.assertEqual("2026-08-01", result.kb_article_version)
         self.assertIsNotNone(result.response)
 
     def test_payment_with_card_is_masked_and_escalated(self) -> None:
@@ -45,6 +46,16 @@ class PipelineTests(unittest.TestCase):
         result = self.pipeline.process(Ticket("T-3", "email", "Помогите, что-то странное"))
         self.assertEqual("ESCALATE", result.action)
         self.assertIn("low_classification_confidence", result.reasons)
+
+    def test_medium_risk_pii_requires_operator_review(self) -> None:
+        result = self.pipeline.process(
+            Ticket("T-PII", "web", "Как отключить уведомления для user@example.com?")
+        )
+        self.assertEqual("ESCALATE", result.action)
+        self.assertEqual("MEDIUM", result.risk)
+        self.assertIn("[EMAIL]", result.masked_text)
+        self.assertIn("personal_data_requires_review", result.reasons)
+        self.assertIsNone(result.response)
 
     def test_prompt_injection_escalates(self) -> None:
         result = self.pipeline.process(

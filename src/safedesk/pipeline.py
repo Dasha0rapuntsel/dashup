@@ -74,6 +74,7 @@ class Decision:
     pii_types: list[str]
     masked_text: str
     kb_article_id: str | None
+    kb_article_version: str | None
     retrieval_score: float
     response: str | None
     reasons: list[str]
@@ -162,6 +163,8 @@ class SupportPipeline:
             reasons.append("prompt_injection_signal")
         if risk == "HIGH":
             reasons.append("high_risk_category")
+        elif risk == "MEDIUM":
+            reasons.append("personal_data_requires_review")
         if classification.confidence < 0.75:
             reasons.append("low_classification_confidence")
         if article is None or article.score < 0.35:
@@ -181,6 +184,7 @@ class SupportPipeline:
             pii_types=pii_types,
             masked_text=masked_text,
             kb_article_id=article.article_id if article else None,
+            kb_article_version=article.version if article else None,
             retrieval_score=article.score if article else 0.0,
             response=response,
             reasons=reasons or ["all_auto_close_gates_passed"],
@@ -201,6 +205,7 @@ class SupportPipeline:
             "classification_confidence": decision.classification_confidence,
             "retrieval_score": decision.retrieval_score,
             "kb_article_id": decision.kb_article_id,
+            "kb_article_version": decision.kb_article_version,
             "reasons": decision.reasons,
             "policy_version": decision.policy_version,
             "classifier_version": decision.classifier_version,
