@@ -10,7 +10,7 @@
 ## Privacy, safety и risk
 
 - Raw PII хранится отдельно и шифруется; внешнему LLM доступны только masked text и минимальный approved context.
-- Payment, takeover, legal/security и low-confidence нельзя закрывать автоматически — нужен оператор.
+- Payment, takeover, legal/security, обнаруженный PII и low-confidence нельзя закрывать автоматически — нужен оператор.
 - Текст пользователя недоверенный: он отделён от инструкций, retrieval ограничен approved KB, а injection/output checks могут заблокировать ответ.
 - Audit хранит версии и причины без текста; критическая утечка или unsafe ответ немедленно включает kill switch.
 
